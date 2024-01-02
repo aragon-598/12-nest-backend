@@ -81,8 +81,8 @@ export class AuthService {
     };
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  findAll():Promise<User[]> {
+    return this.userModel.find();
   }
 
   findOne(id: number) {
@@ -100,5 +100,13 @@ export class AuthService {
   getJwt(payload: JwtPayload){
     const token = this.jwtService.sign(payload);
     return token;
+  }
+
+  async findUserById(id: string){
+    const user = await this.userModel.findById(id);
+
+    const {password, ...userData} = user.toJSON();
+
+    return userData;
   }
 }
