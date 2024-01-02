@@ -7,9 +7,9 @@ import * as bcryptjs from "bcryptjs";
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtPayload } from './interfaces/jwt.payload';
-import { LoginDto } from './dto/login.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginDto, RegisterUserDto, UpdateAuthDto } from './dto';
 import { User } from './entities/user.entity';
+import { LoginResponse } from './interfaces/login-response.interface';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +50,20 @@ export class AuthService {
     }
   }
 
-  async login(loginDto:LoginDto){
+  async register(registerUserDto: RegisterUserDto):Promise<LoginResponse> {
+
+    try {
+      const user  = await this.create(registerUserDto);
+      return {
+        user,
+        token: this.getJwt({id: user._id})
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async login(loginDto:LoginDto):Promise<LoginResponse>{
     const {email,password} = loginDto;
 
     const user = await this.userModel.findOne({email});
